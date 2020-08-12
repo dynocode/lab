@@ -28,6 +28,11 @@ const yoCommands = {
   lint: ['yo', 'labs:lint'],
 };
 
+const deps = {
+  yo: ['npm', 'i', '-g', 'yo'],
+  generator: ['npm', 'i', '-g', 'git+ssh://github.com/dynocode/generator-labs.git'],
+};
+
 async function runYo(baseCommand:string[], props?:string[], flags?:string[]) {
   const command = [...baseCommand];
   if (props) {
@@ -44,7 +49,28 @@ async function runYo(baseCommand:string[], props?:string[], flags?:string[]) {
   await run.status();
 }
 
+async function installDeps(dep:any) {
+  const run = await Deno.run({
+    cmd: dep,
+  });
+
+  // await its completion
+  await run.status();
+}
+
 const commands:any = {
+  install: {
+    exec: async () => {
+      logger.info('Installing yeoman globally');
+      await installDeps(deps.yo);
+      logger.info('Installing generator-labs globally');
+      await installDeps(deps.generator);
+      logger.info('Done: dependencies installed');
+    },
+    help: (params:any, flags:any) => {
+      logger.info('Help');
+    },
+  },
   new: {
     model: {
       exec: async (params:any, flags:any) => {
