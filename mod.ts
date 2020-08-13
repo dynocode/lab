@@ -154,8 +154,9 @@ function runner(input:any) {
   const params = getParams(input);
   const flags = getFlags(input);
   if (flags.n) {
-    flags.n = Array.isArray(flags.n) ? flags.n[1] : null;
+    flags.n = Array.isArray(flags.n) ? flags.n.join('-') : flags.n;
   }
+  const isHelp = flags.h || flags.help;
   const func = params.reduce((result:any, name:any) => {
     if (!result[name]) {
       // TODO: return help
@@ -163,6 +164,10 @@ function runner(input:any) {
     } 
     return result[name];
    }, commands);
+
+   if (isHelp && typeof func.help === 'function') {
+     return func.help(params, flags);
+   }
    if (typeof func.exec !== 'function') {
      // TODO: return help
      return logger.info('Missing props');
