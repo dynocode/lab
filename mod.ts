@@ -75,6 +75,19 @@ const commands:any = {
       console.log(mainHelp);
     },
   },
+  model: {
+    fk: {
+      exec: async (params:any, flags:any) => {
+        return runYo(yoCommands.modelFk);
+      },
+      help: (params:any, flags:any) => {
+        console.log(mainHelp);
+      },
+    },
+    help: (params:any, flags:any) => {
+      console.log(mainHelp);
+    },
+  },
   new: {
     model: {
       exec: async (params:any, flags:any) => {
