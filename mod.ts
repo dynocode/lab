@@ -1,5 +1,7 @@
 import { parse, logger } from './deps.ts';
 
+import { mainHelp, invalidCommand } from './help.ts';
+
 const { args } = Deno;
 const inputArgs = parse(args);
 // instal yo, clone code gen, npm link
@@ -21,11 +23,13 @@ export function getFlags(parsedArgs:any) {
 
 const yoCommands = {
   model: ['yo', 'labs:mongo'],
+  modelFk: ['yo', 'labs:show-model-fk'],
   schema: ['yo', 'labs:schema'],
   resolver: ['yo', 'labs:resolver'],
   init: ['yo', 'labs:init'],
   editorConf: ['yo', 'labs:editorConf'],
   lint: ['yo', 'labs:lint'],
+  indexUpdate: ['yo', 'labs:index-update'],
 };
 
 const deps = {
@@ -68,32 +72,35 @@ const commands:any = {
       logger.info('Done: dependencies installed');
     },
     help: (params:any, flags:any) => {
-      logger.info('Help');
+      console.log(mainHelp);
     },
   },
   new: {
     model: {
       exec: async (params:any, flags:any) => {
-        return runYo(yoCommands.model, [flags.n]);
+        await runYo(yoCommands.model, [flags.n]);
+        return runYo([...yoCommands.indexUpdate, '--model']);
       },
       help: (params:any, flags:any) => {
-        logger.info('Help');
+        console.log(mainHelp);
       },
     },
     schema: {
       exec: async (params:any, flags:any) => {
-        return runYo(yoCommands.schema, [flags.n]);
+        await runYo(yoCommands.schema, [flags.n]);
+        return runYo([...yoCommands.indexUpdate, '--schema']);
       },
       help: (params:any, flags:any) => {
-        logger.info('Help');
+        console.log(mainHelp);
       },
     },
     resolver: {
       exec: async (params:any, flags:any) => {
-        return runYo(yoCommands.resolver, [flags.n]);
+        await runYo(yoCommands.resolver, [flags.n]);
+        return runYo([...yoCommands.indexUpdate, '--resolver']);
       },
       help: (params:any, flags:any) => {
-        logger.info('Help');
+        console.log(mainHelp);
       },
     },
   },
@@ -106,7 +113,7 @@ const commands:any = {
         return runYo(yoCommands.model, [flags.n]);
       },
       help: (params:any, flags:any) => {
-        logger.info('Help');
+        console.log(mainHelp);
       },
     },
     schema: {
@@ -114,7 +121,7 @@ const commands:any = {
         return runYo(yoCommands.schema, [flags.n]);
       },
       help: (params:any, flags:any) => {
-        logger.info('Help');
+        console.log(mainHelp);
       },
     },
     resolver: {
@@ -122,7 +129,7 @@ const commands:any = {
         return runYo(yoCommands.resolver, [flags.n]);
       },
       help: (params:any, flags:any) => {
-        logger.info('Help');
+        console.log(mainHelp);
       },
     },
     editorConf: {
@@ -130,7 +137,7 @@ const commands:any = {
         return runYo(yoCommands.editorConf, [flags.n]);
       },
       help: (params:any, flags:any) => {
-        logger.info('Help');
+        console.log(mainHelp);
       },
     },
     lint: {
@@ -138,17 +145,19 @@ const commands:any = {
         return runYo(yoCommands.lint, [flags.n]);
       },
       help: (params:any, flags:any) => {
-        logger.info('Help');
+        console.log(mainHelp);
       },
     },
     help: (params:any, flags:any) => {
-      logger.info('Help');
+      console.log(mainHelp);
     },
   },
-  help: (params:any, flags:any) => {
-    logger.info('Help');
+  help: async (params:any, flags:any) => {
+    console.log(mainHelp);
   },
 };
+
+// TODO: Help func content should be auto generated.
  
 function runner(input:any) {
   const params = getParams(input);
@@ -159,8 +168,7 @@ function runner(input:any) {
   const isHelp = flags.h || flags.help;
   const func = params.reduce((result:any, name:any) => {
     if (!result[name]) {
-      // TODO: return help
-      throw new Error('Not a command');
+      return false;
     } 
     return result[name];
    }, commands);
@@ -168,9 +176,9 @@ function runner(input:any) {
    if (isHelp && typeof func.help === 'function') {
      return func.help(params, flags);
    }
-   if (typeof func.exec !== 'function') {
-     // TODO: return help
-     return logger.info('Missing props');
+   if (!func || typeof func.exec !== 'function') {
+    console.log(invalidCommand('Missing/Invalid properties and or required arguments'));
+    return console.log(mainHelp)
    }
    return func.exec(params, flags);
 }
