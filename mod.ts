@@ -91,6 +91,11 @@ const commands:any = {
   new: {
     model: {
       exec: async (params:any, flags:any) => {
+        const name = flags.n || flags.name;
+        if (!name) {
+          console.log(invalidCommand('Name: [--name]|[-n] is required.'));
+          return console.log(mainHelp)
+        }
         await runYo(yoCommands.model, [flags.n]);
         return runYo([...yoCommands.indexUpdate, '--model']);
       },
@@ -100,6 +105,11 @@ const commands:any = {
     },
     schema: {
       exec: async (params:any, flags:any) => {
+        const name = flags.n || flags.name;
+        if (!name) {
+          console.log(invalidCommand('Name: [--name]|[-n] is required.'));
+          return console.log(mainHelp)
+        }
         await runYo(yoCommands.schema, [flags.n]);
         return runYo([...yoCommands.indexUpdate, '--schema']);
       },
@@ -109,6 +119,11 @@ const commands:any = {
     },
     resolver: {
       exec: async (params:any, flags:any) => {
+        const name = flags.n || flags.name;
+        if (!name) {
+          console.log(invalidCommand('Name: [--name]|[-n] is required.'));
+          return console.log(mainHelp)
+        }
         await runYo(yoCommands.resolver, [flags.n]);
         return runYo([...yoCommands.indexUpdate, '--resolver']);
       },
