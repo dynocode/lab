@@ -7,9 +7,8 @@ const inputArgs = parse(args);
 // instal yo, clone code gen, npm link
 
 /**
- * should be able to do:
- * 1. `lab new model|schema|resolver -n`
- * 3. `lab init .|name`
+ * TODO:
+ * The formatting need more work, the code gen should handle it, not the cli...
  */
 
 export function getParams(parsedArgs:any) {
@@ -30,6 +29,7 @@ const yoCommands = {
   editorConf: ['yo', 'labs:editorConf'],
   lint: ['yo', 'labs:lint'],
   indexUpdate: ['yo', 'labs:index-update'],
+  format: ['yo', 'labs:format-file'],
 };
 
 const deps = {
@@ -97,7 +97,9 @@ const commands:any = {
           return console.log(mainHelp)
         }
         await runYo(yoCommands.model, [flags.n]);
-        return runYo([...yoCommands.indexUpdate, '--model']);
+        await runYo([...yoCommands.indexUpdate, '--model']);
+        // TODO: the generator should add the file type. (need TS)
+        return runYo([...yoCommands.format, '--relativePath', `${name}.js`, '--relToModel']);
       },
       help: (params:any, flags:any) => {
         console.log(mainHelp);
@@ -111,7 +113,8 @@ const commands:any = {
           return console.log(mainHelp)
         }
         await runYo(yoCommands.schema, [flags.n]);
-        return runYo([...yoCommands.indexUpdate, '--schema']);
+        await runYo([...yoCommands.indexUpdate, '--schema']);
+        return runYo([...yoCommands.format, '--relativePath', `${name}.js`, '--relToSchema']);
       },
       help: (params:any, flags:any) => {
         console.log(mainHelp);
@@ -125,7 +128,8 @@ const commands:any = {
           return console.log(mainHelp)
         }
         await runYo(yoCommands.resolver, [flags.n]);
-        return runYo([...yoCommands.indexUpdate, '--resolver']);
+        await runYo([...yoCommands.indexUpdate, '--resolver']);
+        return runYo([...yoCommands.format, '--relativePath', `${name}.js`, '--relToResolver']);
       },
       help: (params:any, flags:any) => {
         console.log(mainHelp);
