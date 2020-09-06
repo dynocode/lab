@@ -56,9 +56,9 @@ export const mainHelp:string = `
         ${command('init lint')}        ${commandDescription(`Set up a basic linter, and ${green('install')} needed deps`)}
     
     Create new:
-        ${command('new model [--name]')}        ${commandDescription(`Create a new empty ${underline('model file')}, index.js is auto updated to export`)}
-        ${command('new schema [--name]')}       ${commandDescription(`Create a new empty ${underline('schema file')}, index.js is auto updated to export`)}
-        ${command('new resolver [--name]')}     ${commandDescription(`Create a new empty ${underline('resolver file')}, index.js is auto updated to export`)}
+        ${command('model [--name]')}        ${commandDescription(`Create a new empty ${underline('model file')}, index.js is auto updated to export`)}
+        ${command('schema [--name]')}       ${commandDescription(`Create a new empty ${underline('schema file')}, index.js is auto updated to export`)}
+        ${command('resolver [--name]')}     ${commandDescription(`Create a new empty ${underline('resolver file')}, index.js is auto updated to export`)}
 
     
     Other:
