@@ -28,9 +28,9 @@ For help: `lab --help`
         lab init lint        Set up a basic linter, and install needed deps
 
     Create new:
-        lab new model [--name]        Create a new empty model file, index.js is auto updated to export
-        lab new schema [--name]       Create a new empty schema file, index.js is auto updated to export
-        lab new resolver [--name]     Create a new empty resolver file, index.js is auto updated to export
+        new model [--name]        Create a new empty model file, index.js is auto updated to export
+        new schema [--name]       Create a new empty schema file, index.js is auto updated to export
+        new resolver [--name]     Create a new empty resolver file, index.js is auto updated to export
 
 
     Other:

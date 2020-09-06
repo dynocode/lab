@@ -4,12 +4,7 @@ import { mainHelp, invalidCommand } from './help.ts';
 
 const { args } = Deno;
 const inputArgs = parse(args);
-// instal yo, clone code gen, npm link
-
-/**
- * TODO:
- * The formatting need more work, the code gen should handle it, not the cli...
- */
+const version = 'v0.1.0'; // do this dynamic
 
 export function getParams(parsedArgs:any) {
   return parsedArgs._;
@@ -34,7 +29,7 @@ const yoCommands = {
 
 const deps = {
   yo: ['npm', 'i', '-g', 'yo'],
-  generator: ['npm', 'i', '-g', 'git+ssh://github.com/dynocode/generator-labs.git'],
+  generator: ['npm', 'i', '-g', `git+ssh://github.com/dynocode/generator-labs.git#${version}`],
 };
 
 async function runYo(baseCommand:string[], props?:string[], flags?:string[]) {
@@ -76,6 +71,15 @@ const commands:any = {
     },
   },
   model: {
+    exec: async (params:any, flags:any) => {
+      const name = flags.n || flags.name;
+      if (!name) {
+        console.log(invalidCommand('Name: [--name]|[-n] is required.'));
+        return console.log(mainHelp)
+      }
+      await runYo(yoCommands.model, [flags.n]);
+      return runYo([...yoCommands.indexUpdate, '--model']);
+    },
     fk: {
       exec: async (params:any, flags:any) => {
         return runYo(yoCommands.modelFk);
@@ -88,52 +92,32 @@ const commands:any = {
       console.log(mainHelp);
     },
   },
-  new: {
-    model: {
-      exec: async (params:any, flags:any) => {
-        const name = flags.n || flags.name;
-        if (!name) {
-          console.log(invalidCommand('Name: [--name]|[-n] is required.'));
-          return console.log(mainHelp)
-        }
-        await runYo(yoCommands.model, [flags.n]);
-        await runYo([...yoCommands.indexUpdate, '--model']);
-        // TODO: the generator should add the file type. (need TS)
-        return runYo([...yoCommands.format, '--relativePath', `${name}.js`, '--relToModel']);
-      },
-      help: (params:any, flags:any) => {
-        console.log(mainHelp);
-      },
+  schema: {
+    exec: async (params:any, flags:any) => {
+      const name = flags.n || flags.name;
+      if (!name) {
+        console.log(invalidCommand('Name: [--name]|[-n] is required.'));
+        return console.log(mainHelp)
+      }
+      await runYo(yoCommands.schema, [flags.n]);
+      return runYo([...yoCommands.indexUpdate, '--schema']);
     },
-    schema: {
-      exec: async (params:any, flags:any) => {
-        const name = flags.n || flags.name;
-        if (!name) {
-          console.log(invalidCommand('Name: [--name]|[-n] is required.'));
-          return console.log(mainHelp)
-        }
-        await runYo(yoCommands.schema, [flags.n]);
-        await runYo([...yoCommands.indexUpdate, '--schema']);
-        return runYo([...yoCommands.format, '--relativePath', `${name}.js`, '--relToSchema']);
-      },
-      help: (params:any, flags:any) => {
-        console.log(mainHelp);
-      },
+    help: (params:any, flags:any) => {
+      console.log(mainHelp);
     },
-    resolver: {
-      exec: async (params:any, flags:any) => {
-        const name = flags.n || flags.name;
-        if (!name) {
-          console.log(invalidCommand('Name: [--name]|[-n] is required.'));
-          return console.log(mainHelp)
-        }
-        await runYo(yoCommands.resolver, [flags.n]);
-        await runYo([...yoCommands.indexUpdate, '--resolver']);
-        return runYo([...yoCommands.format, '--relativePath', `${name}.js`, '--relToResolver']);
-      },
-      help: (params:any, flags:any) => {
-        console.log(mainHelp);
-      },
+  },
+  resolver: {
+    exec: async (params:any, flags:any) => {
+      const name = flags.n || flags.name;
+      if (!name) {
+        console.log(invalidCommand('Name: [--name]|[-n] is required.'));
+        return console.log(mainHelp)
+      }
+      await runYo(yoCommands.resolver, [flags.n]);
+      return runYo([...yoCommands.indexUpdate, '--resolver']);
+    },
+    help: (params:any, flags:any) => {
+      console.log(mainHelp);
     },
   },
   init: {
